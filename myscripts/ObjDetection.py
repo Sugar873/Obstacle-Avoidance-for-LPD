@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 
 cap = cv2.VideoCapture(0)
+# this is so if the video capture is not opened, the program will exit
+if not cap.isOpened():
+    print("Error opening video capture")
+    exit()
 
 while True:
     _, frame = cap.read()
@@ -22,8 +26,10 @@ while True:
             area = cv2.contourArea(contour)
             if area > 1000:  # Adjust the area threshold as needed
                 (x, y, w, h) = cv2.boundingRect(contour)
+                center_x = int(x + w/2) - frame.shape[1]//2
+                center_y = frame.shape[0]//2 - int(y + h/2)  # Invert the y-coordinate
                 cv2.circle(frame, (int(x + w/2), int(y + h/2)), int((w + h)/4), (0, 0, 255), 2)
-                cv2.putText(frame, f"Coordinates: ({int(x + w/2)}, {int(y + h/2)})", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                cv2.putText(frame, f"Coordinates: ({center_x}, {center_y})", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
     else:
         cv2.putText(frame, "No circle detected", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
