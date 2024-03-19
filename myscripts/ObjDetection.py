@@ -1,11 +1,15 @@
 import cv2
 import numpy as np
+import time
 
 cap = cv2.VideoCapture(0)
 # this is so if the video capture is not opened, the program will exit
 if not cap.isOpened():
     print("Error opening video capture")
     exit()
+
+circle_present = False
+circle_start_time = None
 
 while True:
     _, frame = cap.read()
@@ -30,8 +34,23 @@ while True:
                 center_y = frame.shape[0]//2 - int(y + h/2)  # Invert the y-coordinate
                 cv2.circle(frame, (int(x + w/2), int(y + h/2)), int((w + h)/4), (0, 0, 255), 2)
                 cv2.putText(frame, f"Coordinates: ({center_x}, {center_y})", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                if not circle_present:
+                    circle_present = True
+                    circle_start_time = time.time()
+                elif time.time() - circle_start_time >= 5:
+                    # Capture the image
+                    cv2.imwrite("circle_capture.jpg", frame)
+                    print("Image captured")
+                    # Reset the circle_present flag and start time
+                    circle_present = False
+                    circle_start_time = None
     else:
         cv2.putText(frame, "No circle detected", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+    # Show the timer
+    if circle_present:
+        elapsed_time = int(time.time() - circle_start_time)
+        cv2.putText(frame, f"Timer: {elapsed_time}s", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
     cv2.imshow("frame", frame)
 
