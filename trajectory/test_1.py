@@ -30,6 +30,28 @@ class TrajectoryTest:
             parametric_line.append((x, y, cz))  # Circle is in xy-plane, so z-coordinate is constant
         
         return parametric_line
+    
+    def generate_lines_to_points(start_point, parametric_line_points):
+        lines = []
+        start_point = np.array(start_point)
+        
+        for point in parametric_line_points:
+            end_point = np.array(point)
+            lines.append((start_point, end_point))
+        
+        return lines
+    
+    def angle_between_lines(line1_start, line1_end, line2_start, line2_end):
+        line1_direction = np.array(line1_end) - np.array(line1_start)
+        line2_direction = np.array(line2_end) - np.array(line2_start)
+        
+        dot_product = np.dot(line1_direction, line2_direction)
+        norm_product = np.linalg.norm(line1_direction) * np.linalg.norm(line2_direction)
+        
+        cosine_angle = dot_product / norm_product
+        angle = np.arccos(cosine_angle)
+        
+        return np.degrees(angle)
 
     def edge_intersection_points(points_set, parametric_line):
         line = LineString(parametric_line)
