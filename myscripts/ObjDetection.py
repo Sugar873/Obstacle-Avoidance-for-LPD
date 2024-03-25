@@ -63,7 +63,7 @@ class CircleDetector:
                                         cv2.imwrite('screenshot.png', frame)
                                         self.circle_present = False
                                             # Print real coordinates
-                                        print(self.get_real_coordinates())
+                                        # print(self.get_real_coordinates())
             else:
                 cv2.putText(frame, "No circle detected", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                 self.circle_present = False
@@ -78,6 +78,7 @@ class CircleDetector:
 
     
 
-if __name__ == "__main__":
-    detector = CircleDetector()
-    detector.detect_circle()
+# if __name__ == "__main__":
+#     detector = CircleDetector()
+#     detector.detect_circle()
+    

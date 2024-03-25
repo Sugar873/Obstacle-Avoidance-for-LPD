@@ -1,4 +1,5 @@
 import mecademicpy.robot as mdr
+from ObjDetection import CircleDetector
 
 class Meca500:
     def __init__(self, address):
@@ -42,4 +43,9 @@ if __name__ == "__main__":
     robot.move_joints(0, 0, 0, 0, 0, 0)
     robot.move_joints(0, -60, 60, 0, 0, 0)
     robot.wait_idle()
-    robot.deactivate_and_disconnect()
+
+    detector = CircleDetector()
+    detector.detect_circle()
+    print(detector.get_coordinates())
+
+    
