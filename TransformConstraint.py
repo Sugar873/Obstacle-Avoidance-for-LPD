@@ -36,10 +36,11 @@ class TransformConstraint:
 
         # Return the coordinates of the same point w.r.t WRF
         new_point = [x[0] for x in P]
+        self._add_constr_to_arr((round(new_point[0], 2), round(new_point[1], 2), round(new_point[2], 2)))
         return (round(new_point[0], 2), round(new_point[1], 2), round(new_point[2], 2))
 
 
-    def add_constr_to_arr(self, constr_coord):
+    def _add_constr_to_arr(self, constr_coord):
         self.constr_arr += [constr_coord]
         return self.constr_arr
 
@@ -48,22 +49,22 @@ class TransformConstraint:
 
 
 # if __name__ == "__main__":
-#     proc = TransformConstraint()
+    # proc = TransformConstraint()
 
-#     # Dummy values - for testing
-#     constraint = (1,1,1)
-#     camera = (0,10,10,90,90,0)
-#     constraint_in_wrf = proc.transform_constraint(constraint, camera)
-#     arr = proc.add_constr_to_arr(constraint_in_wrf)
-#     print(constraint_in_wrf)
-#     print(arr)
+    # Dummy values - for testing
+    # constraint = (1,1,1)
+    # camera = (0,10,10,90,90,0)
+    # constraint_in_wrf = proc.transform_constraint(constraint, camera)
+    # arr = proc.add_constr_to_arr(constraint_in_wrf)
+    # print(constraint_in_wrf)
+    # print(proc.get_constr_arr())
 
-#     constraint = (5,1,5)
-#     camera = (-10,10,5,0,90,0)
-#     constraint_in_wrf = proc.transform_constraint(constraint, camera)
-#     arr = proc.add_constr_to_arr(constraint_in_wrf)
-#     print(constraint_in_wrf)
-#     print(arr)
+    # constraint = (5,1,5)
+    # camera = (-10,10,5,0,90,0)
+    # constraint_in_wrf = proc.transform_constraint(constraint, camera)
+    # arr = proc.add_constr_to_arr(constraint_in_wrf)
+    # print(constraint_in_wrf)
+    # print(proc.get_constr_arr())
 
 #     constraint = (142.5883, -64.2218, -110.733)
 #       get forward kin where the camera is

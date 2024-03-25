@@ -1,16 +1,21 @@
 import serial
 
-def get_depth(serial_port: str):
-    with serial.Serial(serial_port, 115200) as ser:
-        dist_a = ser.readline()
-        dist_a = dist_a.decode('utf-8').strip()
-        dist_b = ser.readline()
-        dist_b = dist_b.decode('utf-8').strip()
-        dist_c = ser.readline()
-        dist_c = dist_c.decode('utf-8').strip()
+class Ultrasonic:
+    def __init__(self, serial_port, baud_rate):
+        self.ser = serial.Serial(serial_port, baud_rate)
 
-        if (abs(dist_b - dist_a) < 2) and (abs(dist_b - dist_c) > 2):
+    def get_depth(self):   
+        dist_a = self.ser.readline()
+        dist_a = int(dist_a.decode('utf-8').strip())
+        dist_b = self.ser.readline()
+        dist_b = int(dist_b.decode('utf-8').strip())
+        dist_c = self.ser.readline()
+        dist_c = int(dist_c.decode('utf-8').strip())
+
+        if (abs(dist_b - dist_a) <= 2) and (abs(dist_b - dist_c) > 2):
             depth =  (dist_a + dist_b) / 2
-        elif (abs(dist_b - dist_a) > 2) and (abs(dist_b - dist_c) < 2):
+        elif (abs(dist_b - dist_a) > 2) and (abs(dist_b - dist_c) <= 2):
             depth =  (dist_b + dist_c) / 2
-    return depth
+        else:
+            depth = dist_b
+        return int(depth)
