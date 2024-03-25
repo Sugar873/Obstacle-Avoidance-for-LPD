@@ -40,12 +40,10 @@ if __name__ == "__main__":
     robot = Meca500('192.168.0.100')  #TODO:replace with real host
     robot.connect()
     robot.activate_and_home()
-    robot.move_joints(0, 0, 0, 0, 0, 0)
-    robot.move_joints(0, -60, 60, 0, 0, 0)
     robot.wait_idle()
 
     detector = CircleDetector()
     detector.detect_circle()
-    print(detector.get_coordinates())
+    
 
     

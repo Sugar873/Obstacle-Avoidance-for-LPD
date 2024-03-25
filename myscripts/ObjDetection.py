@@ -18,6 +18,7 @@ class CircleDetector:
     
     def detect_circle(self):
         while True:
+            center_x = center_y = None  # Initialize center_x and center_y
             _, frame = self.cap.read()
             if frame is None:
                 print("Error grabbing frame")
@@ -50,20 +51,26 @@ class CircleDetector:
                         cv2.circle(frame, (int(x), int(y)), int(radius), (0, 0, 255), 2)
                         cv2.putText(frame, f"Pixel Coordinates: ({x:.2f}, {y:.2f})", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                         cv2.putText(frame, f"Real Coordinates: ({center_x:.2f} mm, {center_y:.2f} mm)", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
+                    if center_x is not None and center_y is not None:
                         if not self.circle_present:
-                                self.circle_present = True
-                                self.circle_start_time = time.time()
-                                self.real_coordinates.append((center_x, center_y))  # Store real coordinates
+                            self.circle_present = True
+                            self.circle_start_time = time.time()
+                            self.temp_coordinates = [(center_x, center_y)]  # Reset the temporary list
                         else:
-                                countdown = max(0, int(5 - (time.time() - self.circle_start_time)))
-                                cv2.putText(frame, f"Countdown: {countdown}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                            countdown = max(0, int(3 - (time.time() - self.circle_start_time)))
+                            cv2.putText(frame, f"Countdown: {countdown}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-                                if countdown == 0:
-                                        cv2.imwrite('screenshot.png', frame)
-                                        self.circle_present = False
-                                            # Print real coordinates
-                                        # print(self.get_real_coordinates())
+                            if countdown == 0:
+                                cv2.imwrite('screenshot.png', frame)
+                                self.circle_present = False
+                                # Calculate the average of the x and y values
+                                avg_x = sum(x for x, y in self.temp_coordinates) / len(self.temp_coordinates)
+                                avg_y = sum(y for x, y in self.temp_coordinates) / len(self.temp_coordinates)
+                                self.real_coordinates.append((avg_x, avg_y))  # Store the average coordinates
+                                # Print real coordinates
+                                print(self.get_real_coordinates())
+                            else:
+                                self.temp_coordinates.append((center_x, center_y))  # Store the current coordinates
             else:
                 cv2.putText(frame, "No circle detected", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                 self.circle_present = False
@@ -78,7 +85,7 @@ class CircleDetector:
 
     
 
-# if __name__ == "__main__":
-#     detector = CircleDetector()
-#     detector.detect_circle()
+if __name__ == "__main__":
+    detector = CircleDetector()
+    detector.detect_circle()
     
