@@ -17,12 +17,11 @@ class CircleDetector:
         return self.real_coordinates[-1]
     
     def detect_circle(self):
-        while True:
             center_x = center_y = None  # Initialize center_x and center_y
             _, frame = self.cap.read()
             if frame is None:
                 print("Error grabbing frame")
-                continue
+                
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
             lower_blue = np.array([90, 66, 167])
@@ -78,14 +77,13 @@ class CircleDetector:
             cv2.imshow("frame", frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.cap.release()
-        cv2.destroyAllWindows()
+                self.cap.release()
+                cv2.destroyAllWindows()
 
     
 
 if __name__ == "__main__":
     detector = CircleDetector()
-    detector.detect_circle()
+    while True:
+        detector.detect_circle()
     
