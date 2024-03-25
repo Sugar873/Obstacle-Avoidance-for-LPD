@@ -29,28 +29,32 @@ while True:
         for contour in contours:
             area = cv2.contourArea(contour)
             if area > 1000:  # Adjust the area threshold as needed
-                (x, y, w, h) = cv2.boundingRect(contour)
-                center_x = int(x + w/2) - frame.shape[1]//2
-                center_y = frame.shape[0]//2 - int(y + h/2)  # Invert the y-coordinate
-                cv2.circle(frame, (int(x + w/2), int(y + h/2)), int((w + h)/4), (0, 0, 255), 2)
-                cv2.putText(frame, f"Coordinates: ({center_x}, {center_y})", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                (x, y), radius = cv2.minEnclosingCircle(contour)
+                pixel_diameter = 2 * radius
+                real_diameter = 6.3  # real diameter in cm
+                scale = real_diameter / pixel_diameter  # scale in cm/pixel
+
+                # Calculate real-world coordinates of the center of the circle
+                center_x = (x - frame.shape[1]//2) * scale
+                center_y = (frame.shape[0]//2 - y) * scale  # Invert the y-coordinate
+
+                cv2.circle(frame, (int(x), int(y)), int(radius), (0, 0, 255), 2)
+                cv2.putText(frame, f"Pixel Coordinates: ({x:.2f}, {y:.2f})", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                cv2.putText(frame, f"Real Coordinates: ({center_x:.2f} cm, {center_y:.2f} cm)", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
                 if not circle_present:
                     circle_present = True
                     circle_start_time = time.time()
-                elif time.time() - circle_start_time >= 5:
-                    # Capture the image
-                    cv2.imwrite("circle_capture.jpg", frame)
-                    print("Image captured")
-                    # Reset the circle_present flag and start time
-                    circle_present = False
-                    circle_start_time = None
+                else:
+                    countdown = max(0, int(5 - (time.time() - circle_start_time)))
+                    cv2.putText(frame, f"Countdown: {countdown}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+                    if countdown == 0:
+                        cv2.imwrite('screenshot.png', frame)
+                        circle_present = False
     else:
         cv2.putText(frame, "No circle detected", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
-    # Show the timer
-    if circle_present:
-        elapsed_time = int(time.time() - circle_start_time)
-        cv2.putText(frame, f"Timer: {elapsed_time}s", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+        circle_present = False
 
     cv2.imshow("frame", frame)
 
