@@ -19,6 +19,7 @@ class CircleDetector:
     def detect_circle(self):
             center_x = center_y = None  # Initialize center_x and center_y
             _, frame = self.cap.read()
+            ret = self.cap.read()
             if frame is None:
                 print("Error grabbing frame")
                 
@@ -44,7 +45,7 @@ class CircleDetector:
                         scale = real_diameter / pixel_diameter  # scale in mm/pixel
 
                         # Calculate real-world coordinates of the center of the circle
-                        center_x = (x - frame.shape[1]//2) * scale
+                        center_x = -(x - frame.shape[1]//2) * scale
                         center_y = (frame.shape[0]//2 - y) * scale  # Invert the y-coordinate
 
                         cv2.circle(frame, (int(x), int(y)), int(radius), (0, 0, 255), 2)
@@ -76,14 +77,14 @@ class CircleDetector:
 
             cv2.imshow("frame", frame)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                self.cap.release()
-                cv2.destroyAllWindows()
-
     
 
 if __name__ == "__main__":
     detector = CircleDetector()
     while True:
         detector.detect_circle()
-    
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+                detector.cap.release()
+                cv2.destroyAllWindows()
+                break
